@@ -18,24 +18,30 @@ def links():
 	for term in terms:
 		print term
 
+	print '\n'
 
 	con = bitly_api.Connection(access_token = "dfc9172d3faf9e940c5c10f3c40f50ac8a2e9093")
-	links = []
-	summaries = []
+	linksummary = []
 
 	for term in terms:
 		appendthis = con.search(query = term, limit = 1)[0]
-		links.append(appendthis.get('url'))
-		summaries.append(appendthis.get('summaryTitle'))
-
+		linksummary.append(appendthis.get('url'))
+		linksummary.append(appendthis.get('summaryTitle'))
+	'''
 	for i in range (0,6):
-		print links[i]
-		print summaries[i]
-	return links + summaries
+		print linksummary[i]
+		print '\n'
+	'''		
+	return linksummary
 
-#links()
+def messagecreator(linksum):
+	message = ""
+	for i in range(0,11):
+		message = message + linksum[i] + '\n' + '\n' 
+	return message
 
-def main():
+def main(message):
+	message = "Hello friend,\nHere's some cool stuff that's been happening.\n" + message
 	con = pymongo.MongoClient()
 	e = con.app.emails.find()
 	m = sendgrid.Message("hseth93@gmail.com", "What's New Today", message, "")
@@ -44,4 +50,7 @@ def main():
 		m.add_to(email['email'], email['name'])
 	s.web.send(m)
 
-main()
+linksummary = links()
+message = messagecreator(linksummary)
+print message
+main(message)
