@@ -26,7 +26,7 @@ def links():
 	for term in terms:
 		appendthis = con.search(query = term, limit = 1)[0]
 		linksummary.append((appendthis.get('summaryTitle').replace('<B>',"")).replace('</B>',""))
-		linksummary.append(appendthis.get('url'))
+		linksummary.append(appendthis.get('aggregate_link'))
 
 		
 	'''
@@ -43,12 +43,12 @@ def messagecreator(linksum):
 	return message
 
 def main(message):
-	message = "Hello friend,\nHere's some cool stuff that's been happening.\n" + '\n' +  message
 	con = pymongo.MongoClient()
 	e = con.app.emails.find()
-	m = sendgrid.Message("hseth93@gmail.com", "What's New Today", message, "")
 	for email in e:
 		print email['email']
+		message2 = "Hello"+ ' ' +  email['name'] + ",\nHere's some cool stuff that's been happening.\n" + '\n' +  message
+		m = sendgrid.Message("whatsnew93@gmail.com", "What's New Today", message2, "")
 		m.add_to(email['email'], email['name'])
 	s.web.send(m)
 
