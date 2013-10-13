@@ -12,7 +12,7 @@ def links():
 	json = r.json()
 	terms = []
 
-	for i in range (0,6):
+	for i in range (0,10):
 		terms.append(' '.join(json.get('data').get('top_terms').get('news')[i].get('grams')))
 		
 	for term in terms:
@@ -25,8 +25,10 @@ def links():
 
 	for term in terms:
 		appendthis = con.search(query = term, limit = 1)[0]
+		linksummary.append((appendthis.get('summaryTitle').replace('<B>',"")).replace('</B>',""))
 		linksummary.append(appendthis.get('url'))
-		linksummary.append(appendthis.get('summaryTitle'))
+
+		
 	'''
 	for i in range (0,6):
 		print linksummary[i]
@@ -36,12 +38,12 @@ def links():
 
 def messagecreator(linksum):
 	message = ""
-	for i in range(0,11):
+	for i in range(0,20):
 		message = message + linksum[i] + '\n' + '\n' 
 	return message
 
 def main(message):
-	message = "Hello friend,\nHere's some cool stuff that's been happening.\n" + message
+	message = "Hello friend,\nHere's some cool stuff that's been happening.\n" + '\n' +  message
 	con = pymongo.MongoClient()
 	e = con.app.emails.find()
 	m = sendgrid.Message("hseth93@gmail.com", "What's New Today", message, "")
